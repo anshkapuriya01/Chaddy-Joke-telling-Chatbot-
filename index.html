@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke-a-Bot</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Blue */
+            --secondary-color: #6366f1; /* Indigo */
+            --background-start: #f3f4f6; /* Light gray */
+            --background-end: #e2e8f0; /* Lighter gray */
+            --card-background: #ffffff; /* White */
+            --chat-user-bg: #d1fae5; /* Light green */
+            --chat-bot-bg: #e2e8f0; /* Lighter gray */
+            --text-color: #1f2937; /* Dark gray */
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Floating Image Animations --- */
+        .floating-image {
+            position: absolute;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .floating-image:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 80px; }
+        .floating-image:nth-child(2) { bottom: 20%; right: 15%; animation-delay: 4s; width: 100px; }
+        .floating-image:nth-child(3) { top: 40%; right: 5%; animation-delay: 8s; width: 90px; }
+        .floating-image:nth-child(4) { bottom: 10%; left: 25%; animation-delay: 12s; width: 70px; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 30px) rotate(10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- Chatbot Container --- */
+        .chatbot-container {
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            max-height: 700px;
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- Chatbot Header --- */
+        .chatbot-header {
+            padding: 20px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .chatbot-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- Chat Window --- */
+        #chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Message Styling --- */
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .user-message {
+            background-color: var(--chat-user-bg);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background-color: var(--chat-bot-bg);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .loading-message {
+            font-style: italic;
+            color: #9ca3af;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Input Form --- */
+        #chat-form {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        #user-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        #send-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #send-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            .chatbot-container {
+                height: 100vh;
+                max-width: none;
+                max-height: none;
+                border-radius: 0;
+            }
+
+            .chatbot-header {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating background images -->
+    <img src="https://img.freepik.com/free-vector/hand-drawn-laughing-cartoon-illustration_52683-115895.jpg?semt=ais_hybrid&w=740&q=80" alt="Funny emoji" class="floating-image">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTouzmHDjW4bl6Z2D_5XPWx7O-estmbAStWcTai2HX2svFnIbQE6fBZr3N3pPV-6ciWEc&usqp=CAU" alt="Robot emoji" class="floating-image">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_k0ZhBw251RTgOy_GMWHjghKbR1SXgchKPg&s" alt="Funny emoji" class="floating-image">
+    <img src="https://img.freepik.com/free-vector/hand-drawn-laughing-cartoon-illustration_23-2150515930.jpg" alt="Funny emoji" class="floating-image">
+
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <i class="fa-solid fa-robot"></i>
+            <h1>Chaddy</h1>
+        </div>
+        <div id="chat-window">
+            <div class="message bot-message">Hello! I'm Joke-a-Bot. Ask me to "tell me a joke"! 😄</div>
+        </div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type a message..." required>
+            <button type="submit" id="send-btn">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatWindow = document.getElementById('chat-window');
+
+        // --- Functions ---
+        function addMessage(text, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to bottom
+        }
+
+        async function handleInput(event) {
+            event.preventDefault(); // Prevents page reload
+            const userText = userInput.value.trim();
+
+            if (userText === '') {
+                return; // Do nothing if input is empty
+            }
+
+            // Add user's message to the chat window
+            addMessage(userText, 'user');
+            userInput.value = ''; // Clear the input field
+
+            // Simulate "typing" delay before the bot responds
+            addMessage('...', 'bot');
+            const typingMessage = chatWindow.lastChild;
+
+            try {
+                // Send the user message to the Python server
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: userText }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Get the JSON response from the server
+                const data = await response.json();
+
+                // Remove the typing indicator and display the bot's response
+                typingMessage.remove();
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                console.error('Error fetching data from server:', error);
+                typingMessage.remove();
+                addMessage("Oops! Something went wrong. The server might be down.", 'bot');
+            }
+        }
+
+        // --- Event Listeners ---
+        chatForm.addEventListener('submit', handleInput);
+    </script>
+</body>
+</html>
