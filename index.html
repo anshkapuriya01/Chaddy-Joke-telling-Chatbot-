@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joke-a-Bot</title>
-    <!-- Google Font: Inter -->
+    <title>Chaddy - The Dark Humor Bot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3b82f6; /* Blue */
-            --secondary-color: #6366f1; /* Indigo */
-            --background-start: #f3f4f6; /* Light gray */
-            --background-end: #e2e8f0; /* Lighter gray */
-            --card-background: #ffffff; /* White */
-            --chat-user-bg: #d1fae5; /* Light green */
-            --chat-bot-bg: #e2e8f0; /* Lighter gray */
-            --text-color: #1f2937; /* Dark gray */
-            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --primary-color: #1e293b; /* Very Dark Blue */
+            --secondary-color: #334155; /* Dark Slate */
+            --accent-color: #ef4444; /* Red for dark humor accent */
+            --background-start: #0f172a; /* Almost Black */
+            --background-end: #1e293b; /* Dark Blue Gray */
+            --card-background: #1e293b; /* Dark card */
+            --chat-user-bg: #3b82f6; /* Blue for user */
+            --chat-bot-bg: #334155; /* Gray for bot */
+            --text-color: #f1f5f9; /* White text */
+            --text-muted: #94a3b8;
+            --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.5);
         }
 
         body {
@@ -38,12 +37,13 @@
             position: relative;
         }
 
-        /* --- Floating Image Animations --- */
+        /* --- Floating Image Animations (Ghostly) --- */
         .floating-image {
             position: absolute;
-            opacity: 0.8;
+            opacity: 0.1; /* Very faint */
             pointer-events: none;
             animation: float 20s infinite ease-in-out;
+            filter: grayscale(100%);
         }
 
         .floating-image:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 80px; }
@@ -71,17 +71,16 @@
             overflow: hidden;
             position: relative;
             z-index: 1;
+            border: 1px solid #334155;
         }
 
         /* --- Chatbot Header --- */
         .chatbot-header {
             padding: 20px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(45deg, #0f172a, #1e293b);
             color: white;
             text-align: center;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: var(--shadow-light);
+            border-bottom: 1px solid #334155;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,6 +91,11 @@
             margin: 0;
             font-size: 1.5rem;
             font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .chatbot-header i {
+            color: var(--accent-color);
         }
 
         /* --- Chat Window --- */
@@ -103,6 +107,7 @@
             flex-direction: column;
             gap: 15px;
             scroll-behavior: smooth;
+            background-color: #0f172a;
         }
 
         /* --- Message Styling --- */
@@ -113,23 +118,27 @@
             line-height: 1.5;
             word-wrap: break-word;
             animation: fadeIn 0.3s ease-in-out;
+            font-size: 0.95rem;
         }
 
         .user-message {
             background-color: var(--chat-user-bg);
+            color: white;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
 
         .bot-message {
             background-color: var(--chat-bot-bg);
+            color: var(--text-color);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
+            border: 1px solid #475569;
         }
-        
+
         .loading-message {
             font-style: italic;
-            color: #9ca3af;
+            color: var(--text-muted);
         }
 
         @keyframes fadeIn {
@@ -141,14 +150,17 @@
         #chat-form {
             display: flex;
             padding: 20px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #334155;
             gap: 10px;
+            background-color: var(--card-background);
         }
 
         #user-input {
             flex: 1;
             padding: 12px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: white;
             border-radius: 20px;
             font-size: 1rem;
             outline: none;
@@ -156,11 +168,11 @@
         }
 
         #user-input:focus {
-            border-color: var(--primary-color);
+            border-color: var(--chat-user-bg);
         }
 
         #send-btn {
-            background-color: var(--primary-color);
+            background-color: var(--accent-color);
             color: white;
             border: none;
             border-radius: 50%;
@@ -169,14 +181,79 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #send-btn:hover {
-            background-color: var(--secondary-color);
+            background-color: #dc2626;
         }
 
         #send-btn:active {
             transform: scale(0.95);
+        }
+
+        /* --- DISCLAIMER MODAL --- */
+        .modal {
+            display: flex; /* Hidden by default, toggled via JS but we want it flex to center */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #ef4444;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: dropTop 0.5s ease;
+        }
+
+        @keyframes dropTop {
+            from {transform: translateY(-50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #ef4444;
+        }
+
+        .modal-content p {
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #cbd5e1;
+        }
+
+        #close-modal-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        #close-modal-btn:hover {
+            background-color: #dc2626;
         }
 
         /* --- Responsive Design --- */
@@ -196,89 +273,113 @@
 </head>
 <body>
 
-    <!-- Floating background images -->
-    <img src="https://img.freepik.com/free-vector/hand-drawn-laughing-cartoon-illustration_52683-115895.jpg?semt=ais_hybrid&w=740&q=80" alt="Funny emoji" class="floating-image">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTouzmHDjW4bl6Z2D_5XPWx7O-estmbAStWcTai2HX2svFnIbQE6fBZr3N3pPV-6ciWEc&usqp=CAU" alt="Robot emoji" class="floating-image">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_k0ZhBw251RTgOy_GMWHjghKbR1SXgchKPg&s" alt="Funny emoji" class="floating-image">
-    <img src="https://img.freepik.com/free-vector/hand-drawn-laughing-cartoon-illustration_23-2150515930.jpg" alt="Funny emoji" class="floating-image">
+<img src="https://cdn-icons-png.flaticon.com/512/742/742751.png" alt="Skull" class="floating-image">
+<img src="https://cdn-icons-png.flaticon.com/512/4624/4624388.png" alt="Ghost" class="floating-image">
+<img src="https://cdn-icons-png.flaticon.com/512/5695/5695709.png" alt="Sad Face" class="floating-image">
+<img src="https://cdn-icons-png.flaticon.com/512/260/260222.png" alt="Robot" class="floating-image">
 
-    <div class="chatbot-container">
-        <div class="chatbot-header">
-            <i class="fa-solid fa-robot"></i>
-            <h1>Chaddy</h1>
-        </div>
-        <div id="chat-window">
-            <div class="message bot-message">Hello! I'm Joke-a-Bot. Ask me to "tell me a joke"! 😄</div>
-        </div>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Type a message..." required>
-            <button type="submit" id="send-btn">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </form>
+<div id="disclaimer-modal" class="modal">
+    <div class="modal-content">
+        <h2>⚠️ Disclaimer</h2>
+        <p>All content, including jokes, statements, depictions, and references, is created solely for entertainment and informational purposes. The material is not intended to offend, defame, harm, or disrespect any individual, community, organization, culture, religion, or belief system. Any opinions expressed are not meant to be taken as factual assertions or personal attacks.
+
+            Any resemblance to actual persons, living or deceased, or to real events, locations, or situations is purely coincidental. The creators do not endorse, encourage, or support any form of discrimination, harassment, or malicious intent.
+
+            Viewers are advised to exercise personal judgment and discretion while engaging with the content. If any content is perceived as offensive or inappropriate, it is unintentional, and no harm or ill intent is implied.</p>
+        <button id="close-modal-btn">I Understand</button>
     </div>
+</div>
 
-    <script>
-        // --- DOM Elements ---
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const chatWindow = document.getElementById('chat-window');
+<div class="chatbot-container">
+    <div class="chatbot-header">
+        <i class="fa-solid fa-skull"></i>
+        <h1>Chaddy</h1>
+    </div>
+    <div id="chat-window">
+        <div class="message bot-message">Hello. I am Chaddy. I tell dark jokes. Ask me to "tell me a joke". 💀</div>
+    </div>
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type a message..." required>
+        <button type="submit" id="send-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </form>
+</div>
 
-        // --- Functions ---
-        function addMessage(text, sender) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-            messageElement.textContent = text;
-            chatWindow.appendChild(messageElement);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to bottom
+<script>
+    // --- DOM Elements ---
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const chatWindow = document.getElementById('chat-window');
+    const modal = document.getElementById('disclaimer-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // --- Modal Logic ---
+    // Show modal on page load strictly
+    window.onload = function() {
+        modal.style.display = "flex";
+    }
+
+    closeModalBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // --- Functions ---
+    function addMessage(text, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+        messageElement.textContent = text;
+        chatWindow.appendChild(messageElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to bottom
+    }
+
+    async function handleInput(event) {
+        event.preventDefault(); // Prevents page reload
+        const userText = userInput.value.trim();
+
+        if (userText === '') {
+            return; // Do nothing if input is empty
         }
 
-        async function handleInput(event) {
-            event.preventDefault(); // Prevents page reload
-            const userText = userInput.value.trim();
+        // Add user's message to the chat window
+        addMessage(userText, 'user');
+        userInput.value = ''; // Clear the input field
 
-            if (userText === '') {
-                return; // Do nothing if input is empty
+        // Simulate "typing" delay before the bot responds
+        addMessage('...', 'bot');
+        const typingMessage = chatWindow.lastChild;
+        typingMessage.classList.add('loading-message');
+
+        try {
+            // Send the user message to the Python server
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userText }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // Add user's message to the chat window
-            addMessage(userText, 'user');
-            userInput.value = ''; // Clear the input field
+            // Get the JSON response from the server
+            const data = await response.json();
 
-            // Simulate "typing" delay before the bot responds
-            addMessage('...', 'bot');
-            const typingMessage = chatWindow.lastChild;
-
-            try {
-                // Send the user message to the Python server
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ message: userText }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Get the JSON response from the server
-                const data = await response.json();
-
-                // Remove the typing indicator and display the bot's response
-                typingMessage.remove();
-                addMessage(data.response, 'bot');
-            } catch (error) {
-                console.error('Error fetching data from server:', error);
-                typingMessage.remove();
-                addMessage("Oops! Something went wrong. The server might be down.", 'bot');
-            }
+            // Remove the typing indicator and display the bot's response
+            typingMessage.remove();
+            addMessage(data.response, 'bot');
+        } catch (error) {
+            console.error('Error fetching data from server:', error);
+            typingMessage.remove();
+            addMessage("Error: The server has given up on life. Try again later.", 'bot');
         }
+    }
 
-        // --- Event Listeners ---
-        chatForm.addEventListener('submit', handleInput);
-    </script>
+    // --- Event Listeners ---
+    chatForm.addEventListener('submit', handleInput);
+</script>
 </body>
 </html>
